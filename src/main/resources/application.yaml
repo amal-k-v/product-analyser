@@ -14,11 +14,17 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update   # create | create-drop | update | validate
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
         format_sql: true
+config:
+  allowed-ips:
+    - 127.0.0.1
+    - 0:0:0:0:0:0:0:1
+
+
 springdoc:
   swagger-ui:
     urlsPrimaryName: public-config

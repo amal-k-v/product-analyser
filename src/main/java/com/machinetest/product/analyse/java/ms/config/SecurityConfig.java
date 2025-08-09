@@ -51,13 +51,10 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                       // .requestMatchers("/**").hasRole("PUBLIC")
-                        .requestMatchers("/product/analyse/v1/swagger-ui/user").hasRole("PUBLIC")
-                        .requestMatchers("/**").hasAnyRole( "ADMIN")
-                        .requestMatchers("/public/**").hasAnyRole( "PUBLIC")
-                        .requestMatchers("/swagger-ui/index.html/**").hasAnyRole( "PUBLIC")
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**")
-                        .authenticated()
+                        .requestMatchers("/product/analyse/v1/swagger-ui/**").hasRole("PUBLIC")
+                        .requestMatchers("/**").hasRole("ADMIN")
+                        .requestMatchers("/public/**").hasRole("PUBLIC")
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").hasRole("PUBLIC")
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults());

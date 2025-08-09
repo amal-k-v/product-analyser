@@ -33,6 +33,7 @@ public class SwaggerConfig {
                 // but easiest to design controllers/endpoints accordingly.
                 .build();
     }
+
     @Bean
     public GroupedOpenApi adminApi() {
         return GroupedOpenApi.builder()
@@ -40,14 +41,6 @@ public class SwaggerConfig {
                 .pathsToMatch("/**")
                 .build();
     }
-
-    @Bean
-    public RouterFunction<ServerResponse> swaggerRedirectRouter() {
-        return RouterFunctions.route(
-                RequestPredicates.GET("/product/analyse/v1/swagger-ui/public"),
-                request -> ServerResponse.permanentRedirect(
-                                URI.create("/product/analyse/v1/swagger-ui/index.html?urls.primaryName=public-config"))
-                        .build()
-        );
-    }
 }
+
+

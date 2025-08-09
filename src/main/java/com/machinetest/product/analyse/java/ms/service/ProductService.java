@@ -3,6 +3,7 @@ package com.machinetest.product.analyse.java.ms.service;
 import com.fasterxml.jackson.databind.util.BeanUtil;
 import com.machinetest.product.analyse.java.ms.entity.ProductEntity;
 import com.machinetest.product.analyse.java.ms.entity.SaleEntity;
+import com.machinetest.product.analyse.java.ms.exception.BussinessException;
 import com.machinetest.product.analyse.java.ms.model.ProductDto;
 import com.machinetest.product.analyse.java.ms.repository.ProductRepo;
 import com.machinetest.product.analyse.java.ms.repository.SaleRepo;
@@ -58,7 +59,7 @@ public class ProductService {
                    BeanUtils.copyProperties(productEntity,response);
                 },
                 () -> {
-                    throw new RuntimeException("Product not found!");
+                    throw new BussinessException("Product not found!");
                 }
         );
         } catch (Exception e) {
@@ -79,7 +80,7 @@ public class ProductService {
                         productRepo.save(productEntity);
                     },
                     () -> {
-                        throw new RuntimeException("Product not found!");
+                        throw new BussinessException("Product not found!");
                     }
             );
             status = "SUCCESS";
