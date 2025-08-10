@@ -106,25 +106,6 @@ public class ProductService {
           return status;
       }
 
-    public double getTotalRevenue() {
-        return saleRepo.findAll().stream()
-                .mapToDouble(sale ->
-                        productRepo.findById(sale.getProductId())
-                                .map(product -> product.getPrice() * sale.getQuantity())
-                                .orElse(0.0)
-                )
-                .sum();
-    }
-
-    public double getRevenueByProduct(Long productId) {
-        List<SaleEntity> sales = saleRepo.findByProductId(productId);
-        ProductEntity product = productRepo.findById(productId).orElse(null);
-        if (product == null) return 0;
-
-        return sales.stream()
-                .mapToDouble(sale -> product.getPrice() * sale.getQuantity())
-                .sum();
-    }
 
     public byte[] productReport(){
         List<ProductEntity> products = productRepo.findAll();

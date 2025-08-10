@@ -15,12 +15,12 @@ public class ProductUserController {
     @Autowired
     ProductService productService;
 
-
+    @PreAuthorize("hasAnyRole('PUBLIC','ADMIN')")
     @GetMapping("/product")
     public ResponseEntity<Page<ProductEntity>> getAllProduct(@RequestParam int page, @RequestParam int size){
         return ResponseEntity.ok(productService.getAllProducts(page,size));
     }
-
+    @PreAuthorize("hasAnyRole('PUBLIC','ADMIN')")
     @GetMapping("/product/{productId}")
     public ResponseEntity<ProductDto> getProduct(@PathVariable Long productId ){
         return ResponseEntity.ok(productService.getProductById(productId));

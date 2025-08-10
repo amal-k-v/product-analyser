@@ -11,28 +11,26 @@ import org.springframework.web.bind.annotation.*;
 public class ProductAdminController {
     @Autowired
     ProductService productService;
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/product")
-    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<String> addProduct(@RequestBody ProductDto request){
         String status = productService.addProduct(request);
         return ResponseEntity.ok(status);
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/product")
-    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<String> updateProduct(@RequestBody ProductDto request,@RequestParam Long productId){
         String status = productService.updateProduct(productId,request);
         return ResponseEntity.ok(status);
     }
-
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/product")
-    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<String> deleteProduct(@RequestParam Long productId){
         String status = productService.deleteProduct(productId);
         return ResponseEntity.ok(status);
     }
 
-
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/product/download-pdf")
     public ResponseEntity<byte[]> productReport(){
         return ResponseEntity.ok(productService.productReport());
