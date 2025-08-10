@@ -19,7 +19,7 @@ public class ProductEntity {
     private Long id;
     private String name;
     private String description;
-    private double price;
+    private Double price;
     private Long quantity;
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "productId", referencedColumnName = "id")

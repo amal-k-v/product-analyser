@@ -5,12 +5,14 @@ import com.machinetest.product.analyse.java.ms.entity.ProductEntity;
 import com.machinetest.product.analyse.java.ms.entity.SaleEntity;
 import com.machinetest.product.analyse.java.ms.exception.BussinessException;
 import com.machinetest.product.analyse.java.ms.model.ProductDto;
+import com.machinetest.product.analyse.java.ms.model.ProductResponse;
 import com.machinetest.product.analyse.java.ms.repository.ProductRepo;
 import com.machinetest.product.analyse.java.ms.repository.SaleRepo;
 import com.machinetest.product.analyse.java.ms.service.util.UtilService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -29,18 +32,25 @@ public class ProductService {
     private final SaleRepo saleRepo;
     private final PdfGenerator pdfGenerator;
 
-    public String addProduct(ProductDto productDto){
+    public ProductResponse addProduct(ProductDto productDto){
+        ProductResponse response=new ProductResponse();
         String status="";
+        ProductEntity product=null;
         try {
             ProductEntity productEntity=new ProductEntity();
             BeanUtils.copyProperties(productDto,productEntity);
-            productRepo.save(productEntity);
+             product = productRepo.save(productEntity);
             status="SUCCESS";
         }catch (Exception e){
             status="FAILED";
             log.error("Error Found While Adding Product {}",e.getLocalizedMessage());
         }
-        return  status;
+        response.setStatus(status);
+        if(Objects.nonNull(product)) {
+            response.setId(product.getId());
+        }
+
+        return  response;
     }
 
     public Page<ProductEntity> getAllProducts(int page,int size){
@@ -70,27 +80,28 @@ public class ProductService {
     }
 
 
-    public String updateProduct(Long id, ProductDto request) {
-        String status = "";
+    public ProductDto updateProduct(Long id, ProductDto request) {
+       ProductDto response=new ProductDto();
         try {
             Optional<ProductEntity> product = productRepo.findById(id);
             product.ifPresentOrElse(
                     productEntity -> {
                         BeanUtils.copyProperties(request, productEntity,UtilService.getNullPropertyNames(request));
-                        productRepo.save(productEntity);
+                        ProductEntity prd = productRepo.save(productEntity);
+                        BeanUtils.copyProperties(prd,response);
                     },
                     () -> {
                         throw new BussinessException("Product not found!");
                     }
             );
-            status = "SUCCESS";
+
 
         } catch (Exception e) {
-            status = "FAILED";
+
             log.error("Error Found While updating Product {}", e.getLocalizedMessage());
             throw e;
         }
-        return status;
+        return response;
     }
 
     public String deleteProduct(Long id){
@@ -106,25 +117,6 @@ public class ProductService {
           return status;
       }
 
-    public double getTotalRevenue() {
-        return saleRepo.findAll().stream()
-                .mapToDouble(sale ->
-                        productRepo.findById(sale.getProductId())
-                                .map(product -> product.getPrice() * sale.getQuantity())
-                                .orElse(0.0)
-                )
-                .sum();
-    }
-
-    public double getRevenueByProduct(Long productId) {
-        List<SaleEntity> sales = saleRepo.findByProductId(productId);
-        ProductEntity product = productRepo.findById(productId).orElse(null);
-        if (product == null) return 0;
-
-        return sales.stream()
-                .mapToDouble(sale -> product.getPrice() * sale.getQuantity())
-                .sum();
-    }
 
     public byte[] productReport(){
         List<ProductEntity> products = productRepo.findAll();
